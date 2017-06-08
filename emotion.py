@@ -9,6 +9,10 @@ infile_i = open("images.npy", "rb")
 infile_l = open("labels.npy", "rb")
 
 emo = [np.load(infile_i), np.load(infile_l)]
+randomize = np.arange(len(emo[0]))
+np.random.shuffle(randomize)
+emo[0] = emo[0][randomize]
+emo[1] = emo[1][randomize]
 
 infile_i.close()
 infile_l.close()
@@ -45,7 +49,7 @@ for i in range(69):
 batch_test = (emo[0][600:], emo[1][600:])
 #generate test data
 for i in range(90):
-  n = randint(0,690)
+  n = randint(0,689)
   batch_test[0][i] = emo[0][n]
   batch_test[1][i] = emo[1][n]
 print(accuracy.eval(feed_dict={x: batch_test[0], y_: batch_test[1]}))
@@ -117,11 +121,11 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 sess.run(tf.global_variables_initializer())
 
 try:
-  saver.restore(sess, "model.ckpt")
+  saver.restore(sess, "..\model.ckpt")
   print("Model restored.")
   print("Continuing Training...")
 except:
-  print("Model not found\nTraining new Model...')
+  print("Model not found\nTraining new Model...")
 for epoch in range(120):
   for i in range(69):
     try:
@@ -133,8 +137,8 @@ for epoch in range(120):
       train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
     except:
       print('Exception caught')
-      save_path = saver.save(sess, "model.ckpt")
-      print("Model saved in file: %" % save_path)
+      save_path = saver.save(sess, "..\model.ckpt")
+      print("Model saved in file: %s" % save_path)
       print("Test accuracy %g"%accuracy.eval(feed_dict={x: emo[0][570:], y_: emo[1][570:], keep_prob: 1.0}))
       sys.exit()
 
